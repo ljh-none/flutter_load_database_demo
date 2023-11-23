@@ -26,12 +26,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ref = _storage
-        .ref()
-        .child('gs://ljh-firebase-for-flutter.appspot.com/IMG-0463.jpg');
-
+    //function space
     Future<Uint8List?> loadImage() {
       return Future<Uint8List?>(() async {
+        final ref = _storage.refFromURL(url);
         try {
           Uint8List? result = await ref.getData();
           return result;
@@ -51,6 +49,7 @@ class MyApp extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
             return Image.memory(snapshot.data!);
+            //return Image.network(url);
           },
         ),
       ),

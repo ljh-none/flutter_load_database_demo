@@ -15,6 +15,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 5. 이렇게 생성된 객체를 return하면 밑에 builder에서 snapshot으로 받는듯?
 5. 객체가 생성되었다 = 메모리에 올라가있다. 그래서 Image.memmory()함수로 이미지 띄우는듯.
 
+### 이미지를 로드하는 여러 방법
+1. refFromUrl("url") -> getData -> Image.memory()
+2. Image.network("url"), 얘는 Future builder에서 어떻게 전처리해야하는지 잘 몰겠음.
+
 ### 발생한 오류
 1. ClientException: XMLHttpRequest error., 
 firestore의 CORS설정에 의해 발생한 오류. 상단 링크를 통해 해결 가능.<br>
