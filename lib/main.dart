@@ -1,57 +1,66 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'firebase_options.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:typed_data';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(MyApp());
+import 'dataformat.dart';
+import 'login.dart';
+
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
 }
 
-class MyApp extends StatelessWidget {
-  final String url =
-      'https://firebasestorage.googleapis.com/v0/b/ljh-firebase-for-flutter.appspot.com/o/IMG-0463.jpg?alt=media&token=046d8d63-7de8-47a7-86a7-02d5fcf92710';
-  final FirebaseStorage _storage = FirebaseStorage.instance;
-
-  Future<int> delay() {
-    return Future<int>(() async {
-      var msec = 2000;
-      await Future.delayed(Duration(milliseconds: msec));
-      return msec;
-    });
-  }
-
+class _HomePageState extends State<HomePage> {
+  Item item = Item();
   @override
   Widget build(BuildContext context) {
+    //dummy
     //function space
-    Future<Uint8List?> loadImage() {
-      return Future<Uint8List?>(() async {
-        final ref = _storage.refFromURL(url);
-        try {
-          Uint8List? result = await ref.getData();
-          return result;
-        } catch (e) {
-          print(e);
-          return null;
-        }
-      });
+    // Future<Uint8List?> loadImage() {
+    //   return Future<Uint8List?>(() async {
+    //     final ref = storage.refFromURL(url);
+    //     try {
+    //       Uint8List? result = await ref.getData();
+    //       return result;
+    //     } catch (e) {
+    //       print(e);
+    //       return null;
+    //     }
+    //   });
+    // }
+
+    Widget buildImage(context, snapshot) {
+      if (!snapshot.hasData) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      return Image.memory(snapshot.data!);
+      //return Image.network(url);
     }
 
     return MaterialApp(
-      home: Scaffold(
-        body: FutureBuilder(
-          future: loadImage(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            return Image.memory(snapshot.data!);
-            //return Image.network(url);
-          },
-        ),
+      home: ListView(
+        children: [
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                //item.addItem('a', 'b', 'c', 'f', 'f', 'd');
+              },
+              child: const Text('regist Item test'),
+            ),
+          ),
+          // SizedBox(
+          //   width: double.infinity,
+          //   height: 300,
+          //   child: FutureBuilder(
+          //     future: loadImage(),
+          //     builder: buildImage,
+          //   ),
+          // ),
+        ],
       ),
     );
   }
