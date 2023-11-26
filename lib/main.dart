@@ -1,67 +1,57 @@
-import 'dart:async';
-import 'dart:math';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'firebase_options.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'dart:typed_data';
+import 'package:flutter_load_database_demo/firebase_options.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'myauth.dart';
+import 'home.dart';
 
-import 'dataformat.dart';
-import 'login.dart';
-
-class HomePage extends StatefulWidget {
-  @override
-  State<HomePage> createState() => _HomePageState();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(const MaterialApp(home: MyApp()));
 }
 
-class _HomePageState extends State<HomePage> {
-  Item item = Item();
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  String email = "";
+
+  String pw = "";
+
+  final MyAuth _auth = MyAuth();
+
+  returnHomePage() {
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+      return HomePage();
+    }));
+  }
+
   @override
   Widget build(BuildContext context) {
-    //dummy
-    //function space
-    // Future<Uint8List?> loadImage() {
-    //   return Future<Uint8List?>(() async {
-    //     final ref = storage.refFromURL(url);
-    //     try {
-    //       Uint8List? result = await ref.getData();
-    //       return result;
-    //     } catch (e) {
-    //       print(e);
-    //       return null;
-    //     }
-    //   });
-    // }
-
-    Widget buildImage(context, snapshot) {
-      if (!snapshot.hasData) {
-        return const Center(child: CircularProgressIndicator());
-      }
-      return Image.memory(snapshot.data!);
-      //return Image.network(url);
-    }
-
-    return MaterialApp(
-      home: ListView(
-        children: [
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                //item.addItem('a', 'b', 'c', 'f', 'f', 'd');
-              },
-              child: const Text('regist Item test'),
-            ),
-          ),
-          // SizedBox(
-          //   width: double.infinity,
-          //   height: 300,
-          //   child: FutureBuilder(
-          //     future: loadImage(),
-          //     builder: buildImage,
-          //   ),
-          // ),
-        ],
-      ),
+    return Column(
+      children: [
+        ElevatedButton(
+            onPressed: () async {
+              var result = await _auth.signIn(email: email, password: pw);
+              if (result == null) {
+                print("!failed log in");
+                return;
+              }
+              returnHomePage();
+            },
+            child: const Text("log in")),
+        ElevatedButton(
+          onPressed: () {
+            _auth.signUp(email: email, password: pw, nickname: "d");
+          },
+          child: const Text("sign up"),
+        )
+      ],
     );
   }
 }

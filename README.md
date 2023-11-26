@@ -1,11 +1,42 @@
 # flutter_load_database_demo
 
-A new Flutter project.
-
 참고 링크
 https://firebase.google.com/docs/storage/web/download-files?hl=ko
 
-import 'package:firebase_storage/firebase_storage.dart';
+유저 정보를 어떻게 할까
+1. 싱글톤
+2. 프로바이더
+
+
+String toString() {
+    return '$User('
+        'displayName: $displayName, '
+        'email: $email, '
+        'isEmailVerified: $emailVerified, '
+        'isAnonymous: $isAnonymous, '
+        'metadata: $metadata, '
+        'phoneNumber: $phoneNumber, '
+        'photoURL: $photoURL, '
+        'providerData, $providerData, '
+        'refreshToken: $refreshToken, '
+        'tenantId: $tenantId, '
+        'uid: $uid)';
+  }
+
+
+uid: 사용자의 고유 식별자입니다.
+email: 사용자의 이메일 주소입니다.
+displayName: 사용자의 표시 이름입니다.
+photoURL: 사용자의 프로필 사진 URL입니다.
+emailVerified: 사용자 이메일이 확인되었는지 여부를 나타내는 부울 값입니다.
+isAnonymous: 사용자가 익명 사용자인지 여부를 나타내는 부울 값입니다.
+tenantId: 사용자가 속한 테넌트의 ID입니다. (다중 테넌시 구성에서 사용됨)
+
+reload(): 사용자 정보를 다시 로드합니다.
+delete(): 사용자 계정을 삭제합니다.
+sendEmailVerification(): 사용자에게 이메일 확인 링크를 보냅니다.
+updateEmail(): 사용자 이메일을 업데이트합니다.
+updatePassword(): 사용자 비밀번호를 업데이트합니다.
 
 ### 이미지 로드 과정
 1. Firestorage.instance로 객체 생성

@@ -9,11 +9,7 @@ read me
 지역 리스트 이쪽으로 옯김
 */
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'firebase_options.dart';
-import 'main.dart';
 
 const String IMAGE_URI = 'imageUri';
 const String TITLE = "title";
@@ -96,8 +92,8 @@ class MyUser {
 }
 
 class Item {
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  FirebaseStorage _storage = FirebaseStorage.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   final String _ITEM_DATABASE = '/ItemData';
 
   void addItem(imageUri, title, category, price, description, timestamp,

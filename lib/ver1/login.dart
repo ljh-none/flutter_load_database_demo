@@ -1,26 +1,24 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
-import '../firebase_options.dart';
 
-import 'main.dart';
+import 'main_1.dart';
 import 'dataformat.dart';
 
 MyUser user = MyUser.instance;
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(MyApp());
-}
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+//   runApp(MyApp());
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: const AuthWidget());
+    return const MaterialApp(home: AuthWidget());
   }
 }
 
@@ -110,6 +108,7 @@ class AuthWidgetState extends State<AuthWidget> {
     } else {
       return 'error!!';
     }
+    return null;
   }
 
   @override
@@ -147,7 +146,7 @@ class AuthWidgetState extends State<AuthWidget> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => HomePage()));
+                      builder: (BuildContext context) => const HomePage()));
             }
             submitNickname(); //등록되어있지 않은 유저일 때
           },
@@ -190,7 +189,7 @@ class AuthWidgetState extends State<AuthWidget> {
                       nickname: controller.text,
                       uid: _auth.currentUser!.uid);
                 },
-                child: Text("submit"),
+                child: const Text("submit"),
               )
             ]),
           );
