@@ -9,7 +9,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  MyUser _myUser = MyUser.instance;
+  final MyUser _myUser = MyUser.instance;
   @override
   Widget build(BuildContext context) {
     return Column(

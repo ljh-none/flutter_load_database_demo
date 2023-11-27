@@ -13,12 +13,17 @@ dependencies:
   firebase_storage: ^11.5.2
   flutter:
     sdk: flutter
-  fluttertoast: ^8.2.4
+  http: ^1.1.0
+  image_picker: ^1.0.4
+  intl: ^0.18.1
+  toast: ^0.3.0
+  uuid: ^4.2.1
+  web: ^0.3.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
 
 flutter:
   uses-material-design: true

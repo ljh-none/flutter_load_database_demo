@@ -1,13 +1,25 @@
-import 'dart:js_interop';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 
 // ignore: constant_identifier_names
 const String UID = "uid";
 const String NICKNAME = "nickname";
 const String LOCATION = "location";
+
+const String IMAGE_URI = 'imageUri';
+const String TITLE = "title";
+const String CATEGORY = "category";
+const String PRICE = "price";
+const String DESCRIPTION = "description";
+const String TIMESTAMP = "timestamp";
+const String REGISTER = "register";
+const String EMAIL = "email";
+const String ITEMID = "itemid";
 
 class MyAuth {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -30,7 +42,6 @@ class MyAuth {
       User? user = result.user;
       return user;
     } on FirebaseAuthException {
-      Fluttertoast.showToast(msg: "!log in failed");
       return;
     }
   }
@@ -101,11 +112,9 @@ class MyAuth {
       required String password,
       required String nickname}) async {
     if (await _isNicknameTaken(nickname)) {
-      Fluttertoast.showToast(msg: "nickname already exist");
       return;
     }
     await _verifyUser(email, password);
-    Fluttertoast.showToast(msg: "sign in after email verification");
   }
 }
 
@@ -131,4 +140,70 @@ class MyUser {
     _nickname = nickname;
     _location = location;
   }
+}
+
+class Item {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+  final MyUser _myUser = MyUser._instance;
+  final String _itemUri = '/ItemData';
+  final String _storageUri = 'images/';
+
+  _getCollection() {
+    var result = _firestore.collection(_itemUri);
+    return result;
+  }
+
+  String _getUuid() {
+    Uuid uuid = const Uuid();
+    return uuid.v4();
+  }
+
+  Future _registImage(XFile image) async {
+    String str = _getUuid(); //무작위로 이름 생성
+    //참조 생성
+    Reference ref = _storage.ref().child('$_storageUri$str');
+    //picker로 얻어온 이미지를 uint8list타입으로 반환
+    //File(image.path)를 사용할 경우, 모바일 상에서는 동작 가능하지만, 웹 상에서 동작 안함.
+    Uint8List imageData = await image.readAsBytes();
+    await ref.putData(imageData);
+    String imageurl = await ref.getDownloadURL();
+    return imageurl;
+  }
+
+  registItem(
+      {required XFile image,
+      required String title,
+      required String category,
+      required int price,
+      required String description}) async {
+    var collection = _getCollection(); //아이템 정보 등록할 firestore
+    String url = await _registImage(image);
+    Map<String, dynamic> item = {
+      UID: _myUser.getUid,
+      ITEMID: _getUuid(),
+      IMAGE_URI: url,
+      TITLE: title,
+      CATEGORY: category,
+      PRICE: price.toString(),
+      DESCRIPTION: description,
+      TIMESTAMP: FieldValue.serverTimestamp(),
+      REGISTER: _myUser.getNickname,
+      LOCATION: _myUser.getLocation,
+    };
+    collection.add(item);
+  }
+
+  Future pickImage() async {
+    var image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (image == null) {
+      print("!null from image");
+      return;
+    }
+    return image;
+  }
+
+  findMyItems({required String uid}) {}
+
+  itemStream() {}
 }

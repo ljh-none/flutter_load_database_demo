@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_load_database_demo/firebase_options.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'myauth.dart';
 import 'home.dart';
 
@@ -23,11 +22,14 @@ class _MyAppState extends State<MyApp> {
 
   String pw = "";
 
+  var image;
+
   final MyAuth _auth = MyAuth();
+  final Item _item = Item();
 
   returnHomePage() {
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-      return HomePage();
+      return const HomePage();
     }));
   }
 
@@ -42,7 +44,7 @@ class _MyAppState extends State<MyApp> {
                 print("!failed log in");
                 return;
               }
-              returnHomePage();
+              //returnHomePage();
             },
             child: const Text("log in")),
         ElevatedButton(
@@ -50,6 +52,23 @@ class _MyAppState extends State<MyApp> {
             _auth.signUp(email: email, password: pw, nickname: "d");
           },
           child: const Text("sign up"),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            image = await _item.pickImage();
+          },
+          child: const Text("pick image"),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            await _item.registItem(
+                image: image,
+                title: "title",
+                category: "category",
+                price: 1000,
+                description: "description");
+          },
+          child: const Text("regist item"),
         )
       ],
     );

@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 
 import 'main_1.dart';
@@ -42,13 +41,10 @@ class AuthWidgetState extends State<AuthWidget> {
       UserCredential userInfo = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       if (userInfo.user!.emailVerified) {
-        Fluttertoast.showToast(msg: 'login success');
         return true;
       }
-      Fluttertoast.showToast(msg: 'emailVerified error');
       return false;
     } on FirebaseAuthException catch (e) {
-      Fluttertoast.showToast(msg: e.code);
       throw Error();
     }
   }
@@ -64,14 +60,10 @@ class AuthWidgetState extends State<AuthWidget> {
       UserCredential userInfo = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       if (userInfo.user!.email == null) {
-        Fluttertoast.showToast(msg: "email error!");
         return;
       }
       _auth.currentUser?.sendEmailVerification();
-      Fluttertoast.showToast(msg: "verify email and retry login");
-    } on FirebaseAuthException catch (e) {
-      Fluttertoast.showToast(msg: e.code);
-    }
+    } on FirebaseAuthException catch (e) {}
   }
 
   void checkFormState() {
@@ -180,7 +172,6 @@ class AuthWidgetState extends State<AuthWidget> {
                 onPressed: () async {
                   bool result = await user.isExisted(controller.text);
                   if (result) {
-                    Fluttertoast.showToast(msg: '이미 존재하는 닉네임입니다');
                     return;
                   }
                   user.nickname = controller.text;
