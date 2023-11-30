@@ -21,6 +21,9 @@ const String REGISTER = "register";
 const String EMAIL = "email";
 const String ITEMID = "itemid";
 
+const String CONTENT = "content";
+const String SENDER = "sender";
+
 class MyAuth {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -205,5 +208,23 @@ class Item {
 
   findMyItems({required String uid}) {}
 
-  itemStream() {}
+  getItem({required itemId}) {}
+
+  // Future<List<Map<String, dynamic>>> fetchItem({required var start}) async {
+  //   var collection = _getCollection();
+  //   QuerySnapshot snapshot = collection.orderBy(TIMESTAMP).startAt(100).get(50);
+  // }
+}
+
+class Chat {
+  final String _baseUrl = '/flutter_chat_demo_2/chat_room_list/';
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  getChattingRoom({required String otherUid}) {
+    MyUser myUser = MyUser.instance;
+    String? myuid = myUser.getUid;
+    String url = "$_baseUrl${myuid}_$otherUid";
+    var collection = _firestore.collection(url);
+    return collection;
+  }
 }

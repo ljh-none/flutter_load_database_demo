@@ -18,14 +18,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String email = "";
-
-  String pw = "";
-
-  var image;
+  String email = "ljh09210921@gmail.com";
+  String pw = '';
 
   final MyAuth _auth = MyAuth();
-  final Item _item = Item();
+  final TextEditingController con = TextEditingController();
 
   returnHomePage() {
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
@@ -35,42 +32,29 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ElevatedButton(
-            onPressed: () async {
-              var result = await _auth.signIn(email: email, password: pw);
-              if (result == null) {
-                print("!failed log in");
-                return;
-              }
-              //returnHomePage();
+    return Scaffold(
+      body: Column(
+        children: [
+          TextField(controller: con, obscureText: true),
+          ElevatedButton(
+              onPressed: () async {
+                pw = con.text;
+                var result = await _auth.signIn(email: email, password: pw);
+                if (result == null) {
+                  print("!failed log in");
+                  return;
+                }
+                returnHomePage();
+              },
+              child: const Text("log in")),
+          ElevatedButton(
+            onPressed: () {
+              _auth.signUp(email: email, password: pw, nickname: "d");
             },
-            child: const Text("log in")),
-        ElevatedButton(
-          onPressed: () {
-            _auth.signUp(email: email, password: pw, nickname: "d");
-          },
-          child: const Text("sign up"),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            image = await _item.pickImage();
-          },
-          child: const Text("pick image"),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            await _item.registItem(
-                image: image,
-                title: "title",
-                category: "category",
-                price: 1000,
-                description: "description");
-          },
-          child: const Text("regist item"),
-        )
-      ],
+            child: const Text("sign up"),
+          ),
+        ],
+      ),
     );
   }
 }
