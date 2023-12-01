@@ -23,6 +23,7 @@ const String ITEMID = "itemid";
 
 const String CONTENT = "content";
 const String SENDER = "sender";
+const String RECEIVER = "receiver";
 
 class MyAuth {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -174,6 +175,7 @@ class Item {
     return imageurl;
   }
 
+  //아이템 등록. regist페이지에서 사용
   registItem(
       {required XFile image,
       required String title,
@@ -197,6 +199,7 @@ class Item {
     collection.add(item);
   }
 
+  //이미지 선택 함수
   Future pickImage() async {
     var image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image == null) {
@@ -206,25 +209,104 @@ class Item {
     return image;
   }
 
-  findMyItems({required String uid}) {}
+  //내 아이템만 출력
+  Future getMyItems() async {
+    List<Map<String, dynamic>> list = [];
+    var docRef = await _firestore
+        .collection(_itemUri)
+        .where(UID, isEqualTo: _myUser.getUid)
+        .orderBy(TIMESTAMP)
+        .get();
+    if (docRef.docs.isEmpty) {
+      return;
+    }
+    for (var doc in docRef.docs) {
+      list.add(doc.data());
+    }
+    return list;
+  }
 
-  getItem({required itemId}) {}
+  Future<List<Map<String, dynamic>>> startItemStream() async {
+    List<Map<String, dynamic>> list = [];
+    var snapshot = await _firestore
+        .collection(_itemUri)
+        .orderBy(TIMESTAMP)
+        .limit(50)
+        .get();
+    for (var doc in snapshot.docs) {
+      if (doc.data().isEmpty) {
+        return list;
+      }
+      list.add(doc.data());
+    }
+    return list;
+  }
 
-  // Future<List<Map<String, dynamic>>> fetchItem({required var start}) async {
-  //   var collection = _getCollection();
-  //   QuerySnapshot snapshot = collection.orderBy(TIMESTAMP).startAt(100).get(50);
-  // }
+  Future getMoreItem({required Timestamp time}) async {
+    print("!start get");
+    List<Map<String, dynamic>> list = [];
+    var snapshot = await _firestore
+        .collection(_itemUri)
+        .orderBy(TIMESTAMP)
+        .startAfter([time])
+        .limit(50)
+        .get();
+    for (var doc in snapshot.docs) {
+      if (doc.data().isEmpty) {
+        return list;
+      }
+      list.add(doc.data());
+    }
+
+    return list;
+  }
 }
 
 class Chat {
-  final String _baseUrl = '/flutter_chat_demo_2/chat_room_list/';
+  final String _baseUrl = '/ChatData';
+  final String _log = "chat_log";
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  MyUser myUser = MyUser._instance;
+  //파일구조
+  //chatdata 컬렉션
+  //내에 여러 문서들: 채팅방.
+  //문서 내에는 발신자, 송신자 필드와 채팅 로그 저장을 위한 컬렉션이 있음.
+  //채팅 로그 컬렉션에는 여러 문서들이 있는데, 그 문서 하나하나가 메시지임.
 
-  getChattingRoom({required String otherUid}) {
-    MyUser myUser = MyUser.instance;
-    String? myuid = myUser.getUid;
-    String url = "$_baseUrl${myuid}_$otherUid";
-    var collection = _firestore.collection(url);
+  //활성화 중인 채팅창 리스트 출력을 위해
+  Future showChatList() async {
+    var docRef = await _firestore
+        .collection(_baseUrl)
+        .where(SENDER, isEqualTo: myUser.getNickname)
+        .get();
+
+    if (docRef.docs.isEmpty) return;
+
+    List<Map<String, dynamic>> list = [];
+    for (var doc in docRef.docs) {
+      list.add(doc.data());
+    }
+    return list;
+  }
+
+  //채팅창 리스트에서 요소 클릭 시 채팅방으로 넘어갈 때
+  getChattingRoom({required String receiver}) {
+    CollectionReference collection = _firestore
+        .collection(_baseUrl)
+        .doc("${myUser.getNickname}_$receiver")
+        .collection(_log);
     return collection;
+  }
+
+  //채팅하기 버튼 클릭 시 채팅방 생성할 때
+  createChattingRoom({required String receiver, required String itemId}) {
+    _firestore
+        .collection(_baseUrl)
+        .doc("${myUser.getNickname}_$receiver")
+        .collection(_log);
+    _firestore
+        .collection(_baseUrl)
+        .doc("${myUser.getNickname}_$receiver")
+        .set({SENDER: myUser.getNickname, RECEIVER: receiver, ITEMID: itemId});
   }
 }

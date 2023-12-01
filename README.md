@@ -8,6 +8,19 @@ https://firebase.google.com/docs/storage/web/download-files?hl=ko
 2. 프로바이더
 
 
+플러터 비동기 작업 시 데이터타입
+1. Future<T> : T에 일반 데이터타입 지정 가능
+2. Stream<T> : 보류
+3. snapshot : 특정 시점의 데이터 구조, 내용 및 상태를 포착하여 정적인 형태로 반환.
+4. AsyncSnapshot : 비동기 작업의 결과. 
+멤버 변수
+connectionstate, 비동기 작업의 현재 상태
+data, 비동기 작업의 결과 데이터
+error
+5. QuerySnapshot: 쿼리 결과에 대한 스냅샷. 여러 문서를 포함합니다. 실시간 업데이트를 통해 쿼리 결과가 변경되면 이 스냅샷도 업데이트됩니다.
+6. DocumentSnapshot: 단일 문서에 대한 스냅샷. 단일 문서의 데이터가 변경되면 해당 스냅샷도 업데이트됩니다.
+
+
 String toString() {
     return '$User('
         'displayName: $displayName, '

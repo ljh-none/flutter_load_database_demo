@@ -14,6 +14,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final MyUser _myUser = MyUser.instance;
   final Item _item = Item();
+  String _receiver = "c";
   XFile? image;
 
   @override
@@ -50,12 +51,23 @@ class _HomePageState extends State<HomePage> {
                 }));
               },
               child: const Text("item list")),
-          ElevatedButton(onPressed: () {
-            Navigator.push(context,
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
                     MaterialPageRoute(builder: (BuildContext context) {
-                  return ChatPage();
+                  return ChatList();
                 }));
-          }, child: const Text("chat")),
+              },
+              child: const Text("chat")),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                  //아이템의 상세 정보가 올라와있다고 가정
+                  return ChatPage(_receiver);
+                }));
+              },
+              child: const Text("아이템 상세페이지에서 채팅하기 누를 시")),
         ],
       ),
     );
